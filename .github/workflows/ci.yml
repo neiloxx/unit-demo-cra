@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  setup:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,23 +18,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-
-  unit-tests:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
       - name: Run unit tests
         run: npm run test-ci
 
   e2e-tests:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
       - name: Run e2e tests
-        run: npm e2e-ci
+        run: npm run e2e-ci
 
       - uses: actions/upload-artifact@v3
         if: always()
