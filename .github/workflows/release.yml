@@ -23,15 +23,17 @@ jobs:
         run: |
           TAG=${{ github.ref_name }}
           DATETIME=$(git log -1 --format=%ai ${TAG})
+          PREV_TAG=$(git describe --tags --abbrev=0 ${CURRENT_TAG}^ || echo "origin/master")
           echo "tag_name=${TAG}" >> $GITHUB_OUTPUT
           echo "date_time=${DATETIME}" >> $GITHUB_OUTPUT
+          echo "prev_tag_name=${PREV_TAG}" >> $GITHUB_OUTPUT
 
       - name: Generate changelog
         id: changelog
         uses: metcalfc/changelog-generator@v4.1.0
         with:
           myToken: ${{ secrets.GITHUB_TOKEN }}
-          base-ref: 'origin/master'
+          base-ref: ${{ steps.release_variables.outputs.prev_tag_name }}
 
       - name: Create issue
         id: create_issue
