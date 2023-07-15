@@ -54,8 +54,21 @@ jobs:
     needs: [ issue ]
     uses: ./.github/workflows/ci.yml
 
+  pre_deploy:
+    needs: [ test, issue ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Comment issue after success testing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ needs.issue.outputs.number }} \
+          --body "Action ${{ github.run_id }}, Tests finished successfully"
+
   deploy:
-    needs: [ test ]
+    needs: [ pre_deploy ]
     uses: ./.github/workflows/deploy.yml
 
   post_deploy:
