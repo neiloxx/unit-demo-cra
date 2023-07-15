@@ -10,7 +10,7 @@ permissions:
   issues: write
 
 jobs:
-  generate-changelog:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,7 +22,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  create-issue:
       - name: Create issue
         uses: actions-cool/issues-helper@v3
         with:
