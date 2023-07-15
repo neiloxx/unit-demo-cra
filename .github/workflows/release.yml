@@ -8,9 +8,11 @@ on:
 permissions:
   contents: read
   issues: write
+  pages: write
+  id-token: write
 
 jobs:
-  release:
+  issue:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,6 +34,7 @@ jobs:
           base-ref: 'origin/master'
 
       - name: Create issue
+        id: create_issue
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -42,3 +45,29 @@ jobs:
         with:
           update_existing: true
           search_existing: all
+    outputs:
+      number: ${{ steps.create_issue.outputs.number }}
+
+  test:
+    needs: [ issue ]
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: [ test ]
+    uses: ./.github/workflows/deploy.yml
+
+  post_deploy:
+    needs: [ issue, deploy ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ needs.issue.outputs.number }} \
+          --body "Deploy ${{ github.run_id }}, link: https://neiloxx.github.io/unit-demo-cra/"
+      - name: Close issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue close ${{ needs.issue.outputs.number }} -c "Issue closed automatically after successful Deploy"
