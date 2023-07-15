@@ -32,14 +32,13 @@ jobs:
           base-ref: 'origin/master'
 
       - name: Create issue
-        uses: actions-cool/issues-helper@v3
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.release_variables.outputs.tag_name }}
+          AUTHOR: ${{ github.actor }}
+          DATE: ${{ steps.release_variables.outputs.date_time }}
+          BODY: ${{ steps.changelog.outputs.changelog }}
         with:
-          actions: 'create-issue'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: RELEASE ${{ steps.release_variables.outputs.tag_name }}
-          body: |
-            Release ${{ steps.release_variables.outputs.tag_name }}
-            Author: ${{ github.actor }}
-            Date: ${{ steps.release_variables.outputs.date_time }}
-            ${{ steps.changelog.outputs.changelog }}
-          labels: 'RELEASE'
+          update_existing: true
+          search_existing: all
