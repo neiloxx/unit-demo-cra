@@ -2,7 +2,7 @@ name: Release
 run-name: ${{ github.actor }} is running release
 on:
   push:
-    tag:
+    tags:
       - 'v\d+'
 
 permissions:
