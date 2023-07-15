@@ -1,0 +1,28 @@
+name: Release
+run-name: ${{ github.actor }} is running release
+on:
+  push:
+    tag:
+      - 'v\d+'
+
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create changelog text
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@latest
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-issue'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'RELEASE ${{ github.ref_name }}'
+          body: ${{ steps.changelog.outputs.changelog }}
+          labels: 'RELEASE'
