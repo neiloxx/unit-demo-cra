@@ -14,22 +14,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Create changelog text
+      - name: Define release variables
+        id: release_variables
+        run: |
+          TAG=${{ github.ref_name }}
+          DATETIME=$(git log -1 --format=%ai ${TAG})
+          echo "tag_name=${TAG}" >> $GITHUB_OUTPUT
+          echo "date_time=${DATETIME}" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
         id: changelog
-        uses: TriPSs/conventional-changelog-action@latest
+        uses: metcalfc/changelog-generator@v4.0.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          output-file: 'false'
-          git-push: 'false'
-          version-path: ${{ github.ref_name }}
+          myToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create issue
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'create-issue'
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'RELEASE ${{ github.ref_name }}'
-          body: ${{ steps.changelog.outputs.changelog }}
+          title: RELEASE ${{ steps.release_variables.outputs.tag_name }}
+          body: |
+            Release ${{ steps.release_variables.outputs.tag_name }}
+            Author: ${{ github.actor }}
+            Date: ${{ steps.release_variables.outputs.date_time }}
+            ${{ steps.changelog.outputs.changelog }}
           labels: 'RELEASE'
