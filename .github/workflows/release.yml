@@ -22,7 +22,7 @@ jobs:
         id: changelog
         uses: TriPSs/conventional-changelog-action@latest
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.MY_TOKEN }}
 
       - name: Create issue
         uses: actions-cool/issues-helper@v3
