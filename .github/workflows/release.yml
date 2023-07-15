@@ -23,7 +23,8 @@ jobs:
         uses: TriPSs/conventional-changelog-action@latest
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          output-file: "false"
+          output-file: 'false'
+          git-push: 'false'
 
       - name: Create issue
         uses: actions-cool/issues-helper@v3
