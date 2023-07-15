@@ -23,7 +23,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           output-file: 'false'
           git-push: 'false'
-          skip-git-pull: 'true'
           version-path: ${{ github.ref_name }}
 
       - name: Create issue
