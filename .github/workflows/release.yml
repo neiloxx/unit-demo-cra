@@ -67,7 +67,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh issue comment ${{ needs.issue.outputs.number }} \
-          --body "Action ${{ github.run_id }}, Tests finished successfully"
+          --body "Action https://github.com/neiloxx/unit-demo-cra/actions/runs/${{ github.run_id }}/jobs/${{ github.job_id }}, Tests finished successfully"
 
   deploy:
     needs: [ pre_deploy ]
@@ -84,7 +84,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh issue comment ${{ needs.issue.outputs.number }} \
-          --body "Deploy ${{ github.run_id }}, link: https://neiloxx.github.io/unit-demo-cra/"
+          --body "Deploy https://github.com/neiloxx/unit-demo-cra/actions/runs/${{ github.run_id }}, link: https://neiloxx.github.io/unit-demo-cra/"
       - name: Close issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
